@@ -137,7 +137,7 @@ try {
             <input type="text" name="loginUtilisateur" id="loginUtilisateur"
                 value="<?php echo htmlspecialchars($user['login']); ?>" required>
             <label for="mdpUtilisateur">Mot de passe :</label>
-            <input type="text" name="mdpUtilisateur" id="mdpUtilisateur" required>
+            <input type="password" name="mdpUtilisateur" id="mdpUtilisateur" required>
 
             <input type="submit" value="Modifier l'utilisateur">
         </form>

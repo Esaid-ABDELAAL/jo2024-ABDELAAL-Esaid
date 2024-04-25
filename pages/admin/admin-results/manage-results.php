@@ -22,7 +22,7 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
     <link rel="stylesheet" href="../../../css/styles-computer.css">
     <link rel="stylesheet" href="../../../css/styles-responsive.css">
     <link rel="shortcut icon" href="../../../img/favicon-jo-2024.ico" type="image/x-icon">
-    <title>Gestion des utilisateurs - Jeux Olympiques 2024</title>
+    <title>Gestion Résultats - Jeux Olympiques 2024</title>
     <style>
         /* Ajoutez votre style CSS ici */
         .action-buttons {
@@ -68,44 +68,71 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
         </nav>
     </header>
     <main>
-        <h1>Liste des utilisateurs</h1>
+        <h1>Tableau des résultats</h1>
         <div class="action-buttons">
-            <button onclick="openAddUtulisateurtForm()">Ajouter un utilisateurs</button>
-            <!-- Autres boutons... -->
+            <button onclick="openAddResultForm()">Ajouter un résultat</button>
         </div>
-        <!-- Tableau des utilisateurs -->
+
+
+
         <?php
         require_once("../../../database/database.php");
 
         try {
-            // Requête pour récupérer la liste des sports depuis la base de données
-            $query = "SELECT * FROM UTILISATEUR ORDER BY nom_utilisateur";
+            // Requête pour récupérer la liste des genres depuis la base de données
+            $query = "SELECT ATHLETE.id_athlete, nom_athlete, prenom_athlete, nom_pays, nom_sport, nom_epreuve, resultat
+            FROM ATHLETE
+            INNER JOIN PAYS ON ATHLETE.id_pays = PAYS.id_pays
+            INNER JOIN PARTICIPER ON ATHLETE.id_athlete = PARTICIPER.id_athlete
+            INNER JOIN EPREUVE ON PARTICIPER.id_epreuve = EPREUVE.id_epreuve
+            INNER JOIN SPORT ON EPREUVE.id_sport = SPORT.id_sport
+            ORDER BY nom_athlete";
+            // L'erreur "SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'id_athlete' in field list is ambiguous" signifie que la colonne 'id_athlete' est ambiguë dans la liste des champs. Cela se produit généralement lorsque la colonne est présente dans plusieurs tables incluses dans la requête SQL sans être spécifiée de manière non ambiguë.
+            // En spécifiant la table 'ATHLETE' avec 'ATHLETE.id_athlete', vous évitez l'ambiguïté et la requête devrait fonctionner correctement. Assurez-vous de faire la même correction dans votre code PHP.
             $statement = $connexion->prepare($query);
             $statement->execute();
 
             // Vérifier s'il y a des résultats
             if ($statement->rowCount() > 0) {
-                echo "<table><tr><th>Nom d'utilisateur</th><th>Modifier</th><th>Supprimer</th></tr>";
+                echo "<table>
+                <tr>
+                <th>Nom Athlète</th>
+                <th>Prénom Athlète</th>
+                <th>Pays</th>
+                <th>Sport</th>
+                <th>Epreuves</th>
+                <th>Résultats</th>
+                <th>Modifier</th>
+                <th>Supprimer</th>
+                </tr>";
+
+                
 
                 // Afficher les données dans un tableau
                 while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                     echo "<tr>";
                     // Assainir les données avant de les afficher
-                    echo "<td>" . htmlspecialchars($row['nom_utilisateur']) . "</td>";
-                    echo "<td><button onclick='openModifyUtilisateurtForm({$row['id_utilisateur']})'>Modifier</button></td>";
-                    echo "<td><button onclick='deleteUtilisateurtConfirmation({$row['id_utilisateur']})'>Supprimer</button></td>";
+                    echo "<td>" . htmlspecialchars($row['nom_athlete']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['prenom_athlete']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['nom_pays']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['nom_sport']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['nom_epreuve']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['resultat']) . "</td>";
+
+                    echo "<td><button onclick='openModifyResultForm({$row['id_athlete']})'>Modifier</button></td>";
+                    echo "<td><button onclick='deleteResultConfirmation({$row['id_athlete']})'>Supprimer</button></td>";
                     echo "</tr>";
                 }
 
                 echo "</table>";
             } else {
-                echo "<p>Aucun utilisateur trouvé.</p>";
+                echo "<p>Aucun genre trouvé.</p>";
             }
         } catch (PDOException $e) {
             echo "Erreur : " . $e->getMessage();
         }
         // Afficher les erreurs en PHP
-// (fonctionne à condition d’avoir activé l’option en local)
+        // (fonctionne à condition d’avoir activé l’option en local)
         error_reporting(E_ALL);
         ini_set("display_errors", 1);
         ?>
@@ -120,24 +147,24 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
         </figure>
     </footer>
     <script>
-        function openAddUtulisateurtForm() {
+        function openAddResultForm() {
             // Ouvrir une fenêtre pop-up avec le formulaire de modification
-            // L'URL contien un paramètre "id"
-            window.location.href = 'add-users.php';
+            // L'URL contient un paramètre "id"
+            window.location.href = 'add-results.php';
         }
 
-        function openModifyUtilisateurtForm(id_utilisateur) {
-            // Ajoutez ici le code pour afficher un formulaire stylisé pour modifier un utilisateur
-            // alert(id_sport);
-            window.location.href = 'modify-users.php?id_utilisateur=' + id_utilisateur;
+        function openModifyResultForm(id_athlete) {
+            // Ajoutez ici le code pour afficher un formulaire stylisé pour modifier un genre
+            // alert(id_genre);
+            window.location.href = 'modify-results.php?id_athlete=' + id_athlete;
         }
 
-        function deleteUtilisateurtConfirmation(id_utilisateur) {
-            // Ajoutez ici le code pour afficher une fenêtre de confirmation pour supprimer un utilisateur
-            if (confirm("Êtes-vous sûr de vouloir supprimer l'utilisateur?")) {
-                // Ajoutez ici le code pour la suppression du sport
-                // alert(id_sport);
-                window.location.href = 'delete-users.php?id_utilisateur=' + id_utilisateur;
+        function deleteResultConfirmation(id_athlete) {
+            // Ajoutez ici le code pour afficher une fenêtre de confirmation pour supprimer un genre
+            if (confirm("Êtes-vous sûr de vouloir supprimer ce résultat?")) {
+                // Ajoutez ici le code pour la suppression du genre
+                // alert(id_genre);
+                window.location.href = 'delete-results.php?id_athlete=' + id_athlete;
             }
         }
     </script>

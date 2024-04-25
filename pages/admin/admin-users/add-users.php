@@ -119,7 +119,7 @@ ini_set("display_errors", 1);
             <label for="loginUitilisateur">Login d'utilisateur :</label>
             <input type="text" name="loginUitilisateur" id="loginUitilisateur" required>
             <label for="mdpUitilisateur">Mot de passe :</label>
-            <input type="text" name="mdpUitilisateur" id="mdpUitilisateur" required>
+            <input type="password" name="mdpUitilisateur" id="mdpUitilisateur" required>
 
             <input type="submit" value="Ajouter l'utilisateur">
         </form>
